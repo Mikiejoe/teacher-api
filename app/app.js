@@ -36,6 +36,9 @@ app.options("*", cors(corsOptions));
 app.get("/health",(req,res)=>{
   res.json({"succes":"server running"})
 })
+app.get("/",(req,res)=>{
+  res.json({"message":"Nothing here...!"})
+})
 
 app.use("/auth", authRouter);
 // app.use("/",authMiddleware, chatRouter);
