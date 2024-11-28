@@ -1,14 +1,13 @@
 import { hashSync,compareSync } from "bcrypt";
 import pkg from 'jsonwebtoken';
 import { validationResult } from "express-validator";
-import { User} from "../models/user.model.js";
+import { User } from "../models";
 
 const {sign,} = pkg;
 
 
 export const signup = async (req, res) => {
-  const data = req.body;
-  console.log(data);
+
   const errors = validationResult(req);
   console.log("sdfg");
   console.log(errors);

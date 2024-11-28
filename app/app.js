@@ -4,6 +4,7 @@ import { config, } from "dotenv";
 import morgan from "morgan";
 import cors from "cors";
 import { authRouter } from "./routers/auth.router.js";
+import {learnerRouter} from "./routers/learner.router.js";
 
 
 const app = express()
@@ -34,14 +35,14 @@ app.use(express.json());
 app.options("*", cors(corsOptions));
 
 app.get("/health",(req,res)=>{
-  res.json({"succes":"server running"})
+  res.json({"status":"server running"})
 })
 app.get("/",(req,res)=>{
   res.json({"message":"Nothing here...!"})
 })
 
 app.use("/auth", authRouter);
-// app.use("/",authMiddleware, chatRouter);
+app.use("/api/", learnerRouter);
 
 const PORT = process.env.PORT;
 const DEBUG = process.env.DEBUG === "true";
