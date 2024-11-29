@@ -1,5 +1,5 @@
-import { Learner } from "../models";
 import { validationResult } from "express-validator";
+import {Learner} from "../models/learner.model.js";
 
 export const createLearner = async (req, res) => {
     const errors = validationResult(req);
@@ -46,3 +46,5 @@ export const getLearner = async (req, res) => {
         console.log("Get learner request completed");
     }
 }
+
+// export default {createLearner,getLearner};

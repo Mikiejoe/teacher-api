@@ -1,1 +1,0 @@
-export {default as genQuiz} from "../utils/gemini.js";

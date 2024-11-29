@@ -1,8 +1,13 @@
-// import {Schema, model} from "mongoose";
+import {Schema, model} from "mongoose";
 
-// const subjectSchema = new Schema({
-//     name: {type: String, required: true},
-//     lesson: {type: Schema.Types.ObjectId, ref: "Lesson"},
-// });
+const subjectSchema = new Schema({
+    name: {type: String, required: true},
+    lesson: {type: Schema.Types.ObjectId, ref: "Lesson"},
+});
 
-// export const Subject = model("Subject", subjectSchema);
+
+subjectSchema.query.byLesson = function(lessonId){
+    return this.where({lesson: lessonId})
+}
+
+export const Subject = model("Subject", subjectSchema);

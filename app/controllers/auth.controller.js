@@ -1,7 +1,7 @@
 import { hashSync,compareSync } from "bcrypt";
 import pkg from 'jsonwebtoken';
 import { validationResult } from "express-validator";
-import { User } from "../models";
+import User from "../models/user.model.js";
 
 const {sign,} = pkg;
 

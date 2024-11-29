@@ -14,3 +14,6 @@ const myLearningSchema = new Schema({
         },
     ],
 });
+
+export const MyLearning = model("MyLearning", myLearningSchema);
+
