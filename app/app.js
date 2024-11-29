@@ -15,27 +15,11 @@ const app = express()
 config();
 
 
-const dev = "https://itakuafty.vercel.app"
-const prod = "http://localhost:5173"
-const allowedOrigins = ["http://localhost:5173", "https://itakuafty.vercel.app"];
-
-const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  optionsSuccessStatus: 200,
-  credentials: true,
-};
 
 app.use(morgan("dev"));
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.json());    
 
-app.options("*", cors(corsOptions));
 
 app.get("/health",(req,res)=>{
   res.json({"status":"server running"})
