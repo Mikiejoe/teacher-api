@@ -44,11 +44,14 @@ app.get("/",(req,res)=>{
   res.json({"message":"Nothing here...!"})
 })
 
+app.use(express.static('public'));
+
 app.use("/auth", authRouter);
 app.use("/api/", learnerRouter);
 app.use("/api/", lessonRouter);
 app.get("/api-docs.json", (req, res) => res.json(swaggerSpecs));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+
 
 const PORT = process.env.PORT;
 const DEBUG = process.env.DEBUG === "true";
