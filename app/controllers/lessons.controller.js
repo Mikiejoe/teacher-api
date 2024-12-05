@@ -149,7 +149,8 @@ export const getAllSubjects =  async (req, res) => {
 }
 
 export const getSubjects =  async (req, res) => {
-    const {lessonId} = req.params;
+    let {lessonId} = req.params;
+    lessonId = lessonId.trim();
     try{
         const subjects = await Subject.find().byLesson(lessonId);
         if(!subjects){
@@ -174,7 +175,8 @@ export const getAllTopics =  async (req, res) => {
     }
 }
 export const getTopics =  async (req, res) => {
-    const {subjectId} = req.params;
+    let {subjectId} = req.params;
+    subjectId = subjectId.trim();
     try{
         const topics = await Topic.find().bySubject(subjectId);
         if(!topics){
@@ -199,7 +201,8 @@ export const getAllSubTopics =  async (req, res) => {
     }
 }
 export const getSubTopics =  async (req, res) => {
-    const {topicId} = req.params;
+    let {topicId} = req.params;
+    topicId = topicId.trim();
     try{
         const subTopics = await SubTopic.find().byTopic(topicId);
         if(!subTopics){
