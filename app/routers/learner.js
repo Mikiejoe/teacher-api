@@ -1,6 +1,6 @@
 import express from "express";
 import { body } from "express-validator";
-import { getLearner, createLearner } from "../controllers/learner.controller.js";
+import { getLearner, createLearner, getLearners } from "../controllers/learner.controller.js";
 import { createMyLearning, myLearning, myLearnings } from "../controllers/myLearning.controller.js";
 
 const validateLearner = [
@@ -62,6 +62,7 @@ learnerRouter.post("/learner", validateLearner, createLearner);
  *         description: Learner not found
  */
 learnerRouter.get("/learner/:id", getLearner);
+learnerRouter.get("/learner", getLearners);
 
 /**
  * @swagger

@@ -47,4 +47,18 @@ export const getLearner = async (req, res) => {
     }
 }
 
-// export default {createLearner,getLearner};
+export const getLearners = async (req, res) => {
+    try{
+        const learners = await Learner.find();
+        if(!learners){
+            return res.status(404).json({type: "error", message: "No learners found"});
+        }
+        res.status(200).json({type: "success", data: learners});
+    }catch(error){
+        res.status(500).json({type: "error", message: error.message});
+    }
+    finally{
+        console.log("Get learners request completed");
+    }
+}
+
