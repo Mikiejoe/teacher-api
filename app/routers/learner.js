@@ -1,7 +1,7 @@
 import express from "express";
 import { body } from "express-validator";
 import { getLearner, createLearner, getLearners } from "../controllers/learner.controller.js";
-import { createMyLearning, myLearning, myLearnings } from "../controllers/myLearning.controller.js";
+import { createMyLearning, myLearning, myLearnings,updateMyLearning } from "../controllers/myLearning.controller.js";
 
 const validateLearner = [
   body("email").isEmail().withMessage("Invalid email"),
@@ -9,9 +9,20 @@ const validateLearner = [
 ];
 
 const validateLearning = [
-  body("uid").isString().withMessage("Invalid uid"),
-  body("subTopicId").isMongoId().withMessage("Invalid subTopicId"),
+  body("uid").isString().withMessage("Invalid uid").exists().withMessage("uid is required"),
+  body("subTopicId").exists().withMessage("subTopicId is required").isMongoId().withMessage("Invalid subTopicId"),
 ];
+
+const validateUpdate = [
+  body("uid").exists().withMessage("uid is required"),
+  body("learningId").exists().withMessage("learningId is required").isMongoId().withMessage("learning id is invalid"),
+  // body("uid").isEmpty().withMessage("uid is required"),
+]
+const validateUpdateLearning = [
+  body("uid").exists().withMessage("uid is required"),
+  body("learningId").exists().withMessage("learningId is required").isMongoId().withMessage("learning id is invalid"),
+  body("state").exists().withMessage("state is required").isString().withMessage("Invalid state"),
+]
 
 const learnerRouter = express.Router();
 
@@ -90,7 +101,7 @@ learnerRouter.get("/learner", getLearners);
  *       400:
  *         description: Invalid input
  */
-learnerRouter.post("/myLearning", createMyLearning);
+learnerRouter.post("/myLearning",validateLearning, createMyLearning);
 
 /**
  * @swagger
@@ -126,6 +137,8 @@ learnerRouter.get("/myLearning/:uid", myLearnings);
  *       404:
  *         description: No learnings found
  */
-learnerRouter.get("/myLearning", validateLearning, myLearning);
+learnerRouter.get("/myLearning",validateUpdate, myLearning);
+
+learnerRouter.patch("/myLearning",validateUpdate,updateMyLearning)
 
 export default learnerRouter;

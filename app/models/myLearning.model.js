@@ -6,6 +6,7 @@ const myLearningSchema = new Schema({
     currentIndex: { type: Number, required: true,default:0 },
     // passsed questions is a list contining the index of questions that the learner has passed
     passedQuestions: [{ type: Number,default:0 }],
+    failedQusetions:[{ type: Number,default:0 }],
     questions: [
         {
             question: { type: String, required: true },

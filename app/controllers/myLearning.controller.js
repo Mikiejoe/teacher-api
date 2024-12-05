@@ -2,12 +2,20 @@ import {MyLearning} from '../models/myLearning.model.js';
 import {Learner} from '../models/learner.model.js';
 import {SubTopic} from '../models/topics.model.js';
 import {generateQuizQuestions} from "../utils/gemini.js";
+import { validationResult } from "express-validator";
 
 
 
 
 export const createMyLearning = async (req, res) => {
-    
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        const errorMessages = errors.array().map((error) => ({
+            field: error.path,
+            message: error.msg,
+        }));
+        return res.status(400).json({errors: errorMessages});
+    }
     const {uid,subTopicId} = req.body;
     try{
         const learner = await Learner.findOne({uid});
@@ -55,13 +63,22 @@ export const myLearnings = async (req, res) => {
 }
 
 export const myLearning = async (req, res) => {
-    const {uid,lId} = req.body;
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        const errorMessages = errors.array().map((error) => ({
+            field: error.path,
+            message: error.msg,
+        }));
+        return res.status(400).json({errors: errorMessages});
+    }
+    const {uid,learningId} = req.body;
     try{
         const learner = await Learner.findOne({uid});
         if(!learner){
             return res.status(404).json({type: "error", message: "Learner not found"});
         }
-        const myLearning = await MyLearning.findById(lId);
+        console.log(learningId)
+        const myLearning = await MyLearning.findById(learningId);
         if(!myLearning){
             return res.status(404).json({type: "error", message: "MyLearning not found"});
         }
@@ -75,17 +92,32 @@ export const myLearning = async (req, res) => {
 }
 
 export const updateMyLearning = async (req, res) => {
-    const {uid,lId,currentIndex} = req.body;
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        const errorMessages = errors.array().map((error) => ({
+            field: error.path,
+            message: error.msg,
+        }));
+        return res.status(400).json({errors: errorMessages});
+    }
+    const {uid,learningId,state} = req.body;
     try{
         const learner = await Learner.findOne({uid});
         if(!learner){
             return res.status(404).json({type: "error", message: "Learner not found"});
         }
-        let myLearning = await MyLearning.findById(lId);
+        let myLearning = await MyLearning.findById(learningId);
         if(!myLearning){
             return res.status(404).json({type: "error", message: "MyLearning not found"});
         }
-        myLearning.currentIndex = currentIndex;
+        if(state=="correct"){
+            myLearning.passedQuestions = [...myLearning.passedQuestions, myLearning.currentIndex]
+        }
+        if(state=="failed"){
+            myLearning.failedQusetions = [...myLearning.failedQusetions, myLearning.currentIndex]
+        }
+
+        myLearning.currentIndex +=1;
         myLearning = await myLearning.save();
         if(!myLearning){
             return res.status(400).json({type: "error", message: "MyLearning not updated"});
