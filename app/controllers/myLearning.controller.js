@@ -36,10 +36,12 @@ export const createMyLearning = async (req, res) => {
         });
         myLearning = await myLearning.save();
         if(!myLearning){
+            
             return res.status(400).json({type: "error", message: "MyLearning not created"});
         }
         res.status(201).json({type: "success", message: "MyLearning created successfully",myLearning});
     }catch(error){
+        console.log("error",error.message)
         res.status(500).json({type: "error", message: error.message});
     }
 
