@@ -29,8 +29,24 @@ async function run(subtopic) {
     history: [],
   });
 
-  const result = await chatSession.sendMessage("generate quiz questions");
-  return JSON.parse(result.response.text())
+  try{
+    const result = await chatSession.sendMessage("generate quiz questions");
+    const response = JSON.parse(result.response.text());
+    const res = {
+      error: false,
+      response: response,
+      status: result.status,
+    }
+    
+    return res;
+  }
+  catch(error){
+    const res = {
+      error: true,
+      status: 500,
+    }
+    return res;
+  }
 }
 
 export const generateQuizQuestions = async (subtopic)=>{

@@ -22,26 +22,29 @@ export const createMyLearning = async (req, res) => {
         if(!learner){
             return res.status(404).json({type: "error", message: "Learner not found"});
         }
-        console.log(subTopicId);
         const subTopic = await SubTopic.findById(subTopicId);
         if(!subTopic){
             return res.status(404).json({type: "error", message: "Subtopic not found"});
         }
         const quizes = await generateQuizQuestions(subTopic.name);
 
+       if (quizes.error) {
+            return res.status(500).json({type: "error", message: "Error generating quiz questions"});
+        }
+
         let myLearning = new MyLearning({
             learner: learner._id,
             subTopic: subTopic._id,
-            questions: quizes
+            questions: quizes.response
         });
         myLearning = await myLearning.save();
-        if(!myLearning){
-            
+        if(!myLearning){  
             return res.status(400).json({type: "error", message: "MyLearning not created"});
         }
-        res.status(201).json({type: "success", message: "MyLearning created successfully",myLearning});
+        const result =  {type: "success", message: "MyLearning created successfully",myLearning}
+        res.status(201).json(result);
     }catch(error){
-        console.log("error",error.message)
+        console.error("error",error.message)
         res.status(500).json({type: "error", message: error.message});
     }
 
