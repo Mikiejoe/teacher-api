@@ -77,7 +77,7 @@ learnerRouter.post("/learner", validateLearner, createLearner);
  *         description: Learner not found
  */
 learnerRouter.get("/learner/:id", getLearner);
-learnerRouter.get("/learner", getLearners);
+// learnerRouter.get("/learner", getLearners);
 
 /**
  * @swagger
