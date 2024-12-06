@@ -1,7 +1,7 @@
 import express from "express";
 import { body } from "express-validator";
 import { getLearner, createLearner, getLearners } from "../controllers/learner.controller.js";
-import { createMyLearning, myLearning, myLearnings,updateMyLearning } from "../controllers/myLearning.controller.js";
+import { createMyLearning, myLearning, myLearnings,updateMyLearning,getLearningBySubTopic } from "../controllers/myLearning.controller.js";
 
 const validateLearner = [
   body("email").isEmail().withMessage("Invalid email"),
@@ -17,6 +17,10 @@ const validateUpdate = [
   body("uid").exists().withMessage("uid is required"),
   body("learningId").exists().withMessage("learningId is required").isMongoId().withMessage("learning id is invalid"),
   // body("uid").isEmpty().withMessage("uid is required"),
+]
+const validateSubtopic = [
+  body("uid").exists().withMessage("uid is required"),
+  body("subTopicId").exists().withMessage("subTopicId is required").isMongoId().withMessage("subTopicId is invalid"),
 ]
 const validateUpdateLearning = [
   body("uid").exists().withMessage("uid is required"),
@@ -103,6 +107,12 @@ learnerRouter.get("/learner", getLearners);
  */
 learnerRouter.post("/myLearning",validateLearning, createMyLearning);
 
+
+learnerRouter.get("/myLearning",validateUpdate, myLearning);
+learnerRouter.get("/myLearning/history",validateSubtopic, getLearningBySubTopic);
+
+
+learnerRouter.patch("/myLearning/update",validateUpdateLearning,updateMyLearning)
 /**
  * @swagger
  * /myLearning/{uid}:
@@ -137,8 +147,7 @@ learnerRouter.get("/myLearning/:uid", myLearnings);
  *       404:
  *         description: No learnings found
  */
-learnerRouter.get("/myLearning",validateUpdate, myLearning);
 
-learnerRouter.patch("/myLearning",validateUpdate,updateMyLearning)
+
 
 export default learnerRouter;

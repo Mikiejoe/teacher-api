@@ -114,7 +114,7 @@ export const updateMyLearning = async (req, res) => {
             myLearning.passedQuestions = [...myLearning.passedQuestions, myLearning.currentIndex]
         }
         if(state=="failed"){
-            myLearning.failedQusetions = [...myLearning.failedQusetions, myLearning.currentIndex]
+            myLearning.failedQuestions = [...myLearning.failedQuestions, myLearning.currentIndex]
         }
 
         myLearning.currentIndex +=1;
@@ -127,4 +127,31 @@ export const updateMyLearning = async (req, res) => {
     catch(error){
         res.status(500).json({type: "error", message: error.message});
     }
+}
+
+export const getLearningBySubTopic = async (req, res) => { 
+    const errors = validationResult(req);
+    if(!errors.isEmpty()){
+        const errorMessages = errors.array().map((error) => ({
+            field: error.path,
+            message: error.msg,
+        }));
+        return res.status(400).json({errors: errorMessages});
+    }
+    const {uid,subTopicId} = req.body;
+    try{
+        const learner = await Learner.findOne({uid});
+        if(!learner){
+            return res.status(404).json({type: "error", message: "Learnersssss not found"});
+        }
+        const myLearning = await MyLearning.findOne({learner: learner._id,subTopic: subTopicId});
+        if(!myLearning){
+            return res.status(404).json({type: "error", message: "MyLearning not found"});
+        }
+        res.status(200).json({type: "success", myLearning});
+    }
+    catch(error){
+        res.status(500).json({type: "error", message: error.message});
+    } 
+   
 }
