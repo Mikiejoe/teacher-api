@@ -1,7 +1,7 @@
 import express from "express";
 import { body } from "express-validator";
 import { getLearner, createLearner, getLearners } from "../controllers/learner.controller.js";
-import { createMyLearning, myLearning, myLearnings,updateMyLearning,getLearningBySubTopic } from "../controllers/myLearning.controller.js";
+import { createMyLearning, myLearning, myLearnings,updateMyLearning,getLearningBySubTopic,getSubtopicsLearned } from "../controllers/myLearning.controller.js";
 
 const validateLearner = [
   body("email").isEmail().withMessage("Invalid email"),
@@ -77,7 +77,7 @@ learnerRouter.post("/learner", validateLearner, createLearner);
  *         description: Learner not found
  */
 learnerRouter.get("/learner/:id", getLearner);
-// learnerRouter.get("/learner", getLearners);
+learnerRouter.get("/learner", getLearners);
 
 /**
  * @swagger
@@ -132,7 +132,9 @@ learnerRouter.patch("/myLearning/update",validateUpdateLearning,updateMyLearning
  *       404:
  *         description: No learnings found for the user
  */
+learnerRouter.get("/myLearning/subtopics",getSubtopicsLearned)
 learnerRouter.get("/myLearning/:uid", myLearnings);
+
 
 /**
  * @swagger
