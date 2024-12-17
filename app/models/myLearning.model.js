@@ -4,9 +4,7 @@ const myLearningSchema = new Schema({
   learner: { type: Schema.Types.ObjectId, ref: "Learner" },
   subTopic: { type: Schema.Types.ObjectId, ref: "SubTopic" },
   currentIndex: { type: Number, required: true, default: 0 },
-  updatedAt: { type: Date, default: Date.now() },
-  createdAt: { type: Date, default: Date.now() },
-  // passsed questions is a list contining the index of questions that the learner has passed
+  
   passedQuestions: [{ type: Number, default: 0 }],
   failedQuestions: [{ type: Number, default: 0 }],
   questions: [
@@ -19,6 +17,6 @@ const myLearningSchema = new Schema({
       },
     },
   ],
-});
+},{timestamps: true,});
 
 export const MyLearning = model("MyLearning", myLearningSchema);

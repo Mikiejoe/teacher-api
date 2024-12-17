@@ -133,39 +133,46 @@ export const updateMyLearning = async (req, res) => {
         .json({ type: "error", message: "MyLearning not found" });
     }
     if (myLearning.currentIndex < myLearning.questions.length - 1) {
+      const failedQuestions = myLearning.failedQuestions;
+      const passedQuestions = myLearning.passedQuestions;
+      let passedQuiz, failedQuiz;
       if (state == "correct") {
-        myLearning.passedQuestions = [
-          ...myLearning.passedQuestions,
-          myLearning.currentIndex,
-        ];
+        passedQuiz = [...passedQuestions, myLearning.currentIndex];
       }
       if (state == "failed") {
-        myLearning.failedQuestions = [
-          ...myLearning.failedQuestions,
-          myLearning.currentIndex,
-        ];
+        failedQuiz = [...failedQuestions, myLearning.currentIndex];
       }
 
-      myLearning.currentIndex += 1;
+      const currentIndex = myLearning.currentIndex + 1;
+      const result = await MyLearning.updateOne(
+        { _id: learningId }, // Filter
+        {
+          $set: {
+            currentIndex: currentIndex,
+            passedQuestions: passedQuiz,
+            failedQuestions: failedQuiz,
+          },
+        },
+        { new: true }
+      );
+      if (result.modifiedCount === 1) {
+        res.status(200).json({
+          type: "success",
+          message: "MyLearning updated successfully",
+        });
+      } else {
+        res
+          .status(500)
+          .json({
+            type: "error",
+            message: "Failed to update",
+          });
+      }
     } else {
-      return res
+      res
         .status(400)
         .json({ type: "error", message: "You have reached the last question" });
     }
-
-    myLearning.updatedAt = Date.now();
-
-    myLearning = await myLearning.save();
-    if (!myLearning) {
-      return res
-        .status(400)
-        .json({ type: "error", message: "MyLearning not updated" });
-    }
-    res.status(200).json({
-      type: "success",
-      message: "MyLearning updated successfully",
-      myLearning,
-    });
   } catch (error) {
     res.status(500).json({ type: "error", message: error.message });
   }
@@ -191,7 +198,7 @@ export const getLearningBySubTopic = async (req, res) => {
     const myLearning = await MyLearning.find({
       learner: learner._id,
       subTopic: subTopicId,
-    });
+    }).sort({ updatedAt: -1 });
     if (!myLearning) {
       return res
         .status(404)
@@ -203,15 +210,15 @@ export const getLearningBySubTopic = async (req, res) => {
       failedQuestions: item.failedQuestions,
       passedPercent:
         item.currentIndex === item.questions.length
-          ? ((item.passedQuestions.length) *
-              100) /
-              item.questions.length
+          ? (item.passedQuestions.length * 100) / item.questions.length
           : null,
       completed:
         item.passedQuestions.length + item.failedQuestions.length === 10,
-      title: item.questions.length > 0 ? item.questions[0].question : null, // Get the first question
+      title:
+        item.questions.length > 0
+          ? item.questions[item.currentIndex].question
+          : null, // Get the first question
       updatedAt: item.updatedAt,
-      test: item.passedQuestions.length + item.failedQuestions.length
     }));
 
     res.status(200).json({ type: "success", learnings });
