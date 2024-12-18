@@ -51,10 +51,21 @@ export const createMyLearning = async (req, res) => {
         .status(400)
         .json({ type: "error", message: "MyLearning not created" });
     }
+    const myL = {
+      _id: myLearning._id,
+      learner: myLearning.learner,
+      questions: myLearning.questions,
+      passedQuestions: myLearning.passedQuestions,
+      failedQuestions: myLearning.failedQuestions,
+      currentIndex: myLearning.currentIndex,
+      "__v": myLearning.__v,
+      subTopic: myLearning.subTopic
+
+    }
     const result = {
       type: "success",
       message: "MyLearning created successfully",
-      myLearning,
+      myL,
     };
     res.status(201).json(result);
   } catch (error) {
