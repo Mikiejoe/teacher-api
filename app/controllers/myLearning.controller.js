@@ -3,6 +3,7 @@ import { Learner } from "../models/learner.model.js";
 import { SubTopic } from "../models/topics.model.js";
 import { generateQuizQuestions } from "../utils/gemini.js";
 import { validationResult } from "express-validator";
+import { Subject } from "../models/subjects.model.js";
 
 export const createMyLearning = async (req, res) => {
   const errors = validationResult(req);
@@ -21,13 +22,17 @@ export const createMyLearning = async (req, res) => {
         .status(404)
         .json({ type: "error", message: "Learner not found" });
     }
-    const subTopic = await SubTopic.findById(subTopicId);
+    const subTopic = await SubTopic.findById(subTopicId)
+      .populate("topic")
+    
     if (!subTopic) {
       return res
         .status(404)
         .json({ type: "error", message: "Subtopic not found" });
     }
-    const quizes = await generateQuizQuestions(subTopic.name);
+    const level = await Subject.findById(subTopic.topic.subject).populate("lesson")
+      
+    const quizes = await generateQuizQuestions(subTopic.name,level.lesson.name,subTopic.description);
 
     if (quizes.error) {
       return res
@@ -161,12 +166,10 @@ export const updateMyLearning = async (req, res) => {
           message: "MyLearning updated successfully",
         });
       } else {
-        res
-          .status(500)
-          .json({
-            type: "error",
-            message: "Failed to update",
-          });
+        res.status(500).json({
+          type: "error",
+          message: "Failed to update",
+        });
       }
     } else {
       res
